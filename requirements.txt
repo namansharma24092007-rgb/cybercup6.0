@@ -3,3 +3,4 @@ scikit-learn
 numpy
 qrcode>=7.4
 # optional, for production serving:  gunicorn
+gunicorn
