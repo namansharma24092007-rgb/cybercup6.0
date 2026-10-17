@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UPI Rakshak · Check before you pay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f1b33;--ink2:#3d4960;--mut:#66728a;--bg:#edf0f5;--card:#fff;--soft:#f5f7fa;--line:#dde3ec;--pri:#2147d6;--prid:#1a3bb3;--prit:#e8edfc;--ok:#0b8a5a;--okt:#dcf3e8;--wa:#9a5800;--wat:#fdefd0;--bad:#c0262d;--badt:#fbe3e3;--r:14px}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font:14px/1.5 "Manrope","Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* auth */
+#auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--ink);color:#fff;padding:56px 64px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero h1{font-size:42px;line-height:1.1;letter-spacing:-1.2px;margin:0 0 16px;max-width:12em;font-weight:800}.hero p{color:#b8c3da;font-size:16px;max-width:30em;margin:0}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}.logo b{width:32px;height:32px;border-radius:10px;background:var(--pri);display:grid;place-items:center}.logo b svg{stroke:#fff}
+.facts{display:grid;gap:14px;margin-top:36px}.facts div{display:flex;gap:12px;color:#d5def0;max-width:34em}.facts svg{color:#7ea0ff;margin-top:3px}
+.hero .ring{position:absolute;right:-140px;bottom:-140px;width:420px;height:420px;border-radius:50%;border:56px solid rgba(126,160,255,.09)}
+.formwrap{display:grid;place-items:center;padding:32px}.fcard{width:100%;max-width:400px}.fcard h2{font-size:26px;letter-spacing:-.5px;margin:0 0 4px}.fcard>p{margin:0 0 20px;color:var(--mut)}
+.tabsw{display:flex;background:var(--soft);border-radius:12px;padding:4px;margin-bottom:18px;border:1px solid var(--line)}
+.tabsw button{flex:1;border:0;background:none;padding:9px;border-radius:9px;font-weight:700;color:var(--mut)}.tabsw button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(15,27,51,.12)}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:13px 0 5px}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:#fff}
+input:focus,textarea:focus,select:focus{border-color:var(--pri);outline:3px solid var(--prit)}
+textarea{resize:vertical;min-height:64px}
+.hint{font-size:12px;color:var(--mut);margin-top:4px}.err{color:var(--bad);font-size:13px;font-weight:600;margin-top:12px;min-height:18px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:15px;text-align:center}.btn:disabled{opacity:.55;cursor:default}
+.pri{background:var(--pri);color:#fff}.pri:hover:not(:disabled){background:var(--prid)}
+.gh{background:var(--soft);color:var(--ink);border:1px solid var(--line)}.gh:hover:not(:disabled){background:#eaeef4}
+.dng{background:var(--bad);color:#fff}.ok{background:var(--ok);color:#fff}.sm{padding:8px 12px;font-size:13px;border-radius:10px;width:auto;display:inline-block}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+/* shell */
+.top{background:#fff;border-bottom:1px solid var(--line);padding:10px 24px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.top .logo b{width:30px;height:30px}.top nav{display:flex;gap:4px;flex-wrap:wrap}
+.top nav button{border:0;background:none;padding:8px 13px;border-radius:9px;font-weight:700;color:var(--mut)}.top nav button.on{background:var(--prit);color:var(--pri)}
+.me{margin-left:auto;display:flex;align-items:center;gap:12px}.me small{display:block;color:var(--mut);line-height:1.2}
+.out{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;font-weight:600;color:var(--ink2)}
+main{max-width:1180px;margin:24px auto;padding:0 18px}
+.cols{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:22px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.panel h3{margin:0 0 4px;font-size:16px}.sub{color:var(--mut);font-size:13px;margin:0 0 12px}
+.empty{color:var(--mut);text-align:center;padding:36px 16px}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:500;margin:10px 0 0;color:var(--ink2)}.chk input{width:18px;height:18px;margin-top:1px;flex:none}
+.info{margin-top:8px;font-size:12.5px;color:var(--ink2);display:flex;gap:6px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;background:var(--soft);border:1px solid var(--line);color:var(--ink2)}
+.tag.g{background:var(--okt);border-color:#bfe6d3;color:#08684a}.tag.w{background:var(--wat);border-color:#f3dba0;color:var(--wa)}.tag.r{background:var(--badt);border-color:#f2c1c3;color:var(--bad)}
+/* verdict */
+.verdict{border-radius:16px;padding:18px;margin-bottom:14px}.verdict.ALLOW{background:var(--okt)}.verdict.WARN{background:var(--wat)}.verdict.BLOCK{background:var(--badt)}
+.verdict small{font-weight:800;letter-spacing:.6px;font-size:11px}.verdict.ALLOW small{color:#08684a}.verdict.WARN small{color:var(--wa)}.verdict.BLOCK small{color:var(--bad)}
+.verdict h2{margin:2px 0 6px;font-size:21px;letter-spacing:-.4px}.verdict p{margin:0;color:var(--ink2)}
+.meter{height:8px;background:rgba(15,27,51,.1);border-radius:99px;margin-top:14px;overflow:hidden}.meter i{display:block;height:100%;border-radius:99px;background:var(--ok)}.WARN .meter i{background:#d98a00}.BLOCK .meter i{background:var(--bad)}
+.facts2{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+h4{margin:16px 0 8px;font-size:13px;color:var(--ink2);text-transform:uppercase;letter-spacing:.5px}
+.ind{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line)}.ind:first-of-type{border-top:0}.dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:none;background:#9aa6bd}.dot.high{background:var(--bad)}.dot.medium{background:#d98a00}
+.bar{display:grid;grid-template-columns:1fr 120px 44px;gap:10px;align-items:center;padding:4px 0;font-size:13px}.bar i{display:block;height:7px;border-radius:9px;background:var(--pri)}.bar div{background:var(--soft);border-radius:9px;overflow:hidden}.bar span{text-align:right;color:var(--mut)}
+.ai{background:var(--prit);border-radius:12px;padding:11px 13px;margin-top:12px;color:#1d3a99;font-size:13px}
+.acts{display:grid;gap:10px;margin-top:16px}
+.ho a.btn{text-decoration:none;margin-bottom:8px}.qr{display:grid;place-items:center;padding:10px;background:#fff;border:1px solid var(--line);border-radius:14px;margin:12px 0}.qr svg{width:190px;height:190px}
+.steps{margin:10px 0 0;padding-left:20px;color:var(--ink2)}.steps li{margin:4px 0}
+/* lists */
+.item{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:13px;margin-bottom:8px;background:#fff;cursor:pointer;width:100%;text-align:left}.item:hover,.item.on{border-color:var(--pri);background:#fafbff}
+.item .m{flex:1;min-width:0}.item b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.item small{color:var(--mut)}
+.amt{font-weight:800;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--mut);font-weight:700;padding:8px;border-bottom:1px solid var(--line)}td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px}.stat small{color:var(--mut);font-weight:600}.stat b{display:block;font-size:24px;letter-spacing:-.5px}
+.hb{display:flex;align-items:flex-end;gap:8px;height:110px;margin:8px 0}.hb div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%;font-size:11px;color:var(--mut)}.hb i{display:block;width:70%;background:var(--pri);border-radius:5px 5px 0 0;min-height:2px}
+.overlay{position:fixed;inset:0;background:rgba(15,27,51,.8);z-index:50;display:grid;place-items:center;padding:16px}.overlay .box{background:#fff;border-radius:18px;padding:16px;max-width:460px;width:100%}.overlay video{width:100%;border-radius:12px;background:#000;aspect-ratio:1}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:12px;z-index:60;font-weight:600;max-width:90vw;display:none}
+@media(max-width:860px){#auth{grid-template-columns:1fr}.hero{padding:28px}.hero h1{font-size:28px}.facts{display:none}.cols{grid-template-columns:1fr}.top{padding:10px 14px}}
+</style></head><body>
+
+<div id="auth">
+  <section class="hero"><div class="logo"><b><svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></b>UPI Rakshak</div>
+    <div><h1>Check any UPI ID before you pay it.</h1><p>Paste a UPI ID, scan a QR or open a payment link. Rakshak scores it for scams in real time, then hands the payment to your own UPI app.</p>
+      <div class="facts">
+        <div><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Works with any real UPI ID, not a closed demo list.</div>
+        <div><svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Your UPI PIN is entered only inside your UPI app. We never see it.</div>
+        <div><svg class="i" viewBox="0 0 24 24"><path d="M4 19V9m6 10V5m6 14v-7m4 7H2"/></svg>ML model + explainable rules + optional Grok reasoning, with every decision stored and explained.</div>
+      </div></div><span class="ring"></span><span></span></section>
+  <section class="formwrap"><div class="fcard">
+    <h2 id="at">Welcome back</h2><p id="as">Sign in to check and make payments.</p>
+    <div class="tabsw"><button id="t1" class="on" onclick="authTab(1)">Sign in</button><button id="t2" onclick="authTab(2)">Create account</button></div>
+    <div id="rn" hidden><label>Full name</label><input id="an" autocomplete="name"></div>
+    <label>Mobile number</label><input id="ap" inputmode="numeric" maxlength="10" placeholder="10-digit mobile" autocomplete="tel">
+    <div id="re" hidden><label>Email (optional)</label><input id="ae" type="email" autocomplete="email"></div>
+    <label>Password</label><input id="aw" type="password" autocomplete="current-password" placeholder="At least 8 characters">
+    <div class="err" id="aerr"></div><button class="btn pri" id="ab" onclick="authGo()">Sign in</button>
+  </div></section>
+</div>
+
+<div id="app" hidden>
+  <header class="top"><div class="logo"><b><svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></b>UPI Rakshak</div>
+    <nav id="nav"></nav>
+    <div class="me"><div><b id="mn"></b><small id="ms"></small></div><button class="out" onclick="logout()">Sign out</button></div></header>
+  <main id="main"></main>
+</div>
+
+<div class="overlay" id="scan" hidden><div class="box"><b>Scan a UPI QR code</b><p class="hint" id="scanmsg">Point the camera at the QR.</p><video id="vid" playsinline muted></video>
+  <button class="btn gh" style="margin-top:12px" onclick="stopScan()">Close</button></div></div>
+<div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const inr=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const when=s=>s?new Date(s).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+const ST={CHECKED:['Checked',''],UNDER_REVIEW:['Under review','w'],APPROVED:['Approved by analyst','g'],INITIATED:['Opened in UPI app','w'],PAID:['Paid','g'],FAILED:['Failed','r'],CANCELLED:['Cancelled',''],REJECTED:['Rejected','r']};
+const DC={ALLOW:'g',WARN:'w',BLOCK:'r'};
+const MODES={pay:'I am paying a UPI ID',qr:'I scanned a QR code',link:'I received a payment link',collect:'Someone sent me a payment request to approve'};
+let S={user:null,view:'pay',form:{},res:null,ho:null,sel:null,mode:'login',timer:null};
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>t.style.display='none',4200)}
+async function api(p,m='GET',b){const o={method:m,headers:{}};if(m!=='GET'){o.headers['Content-Type']='application/json';o.body=JSON.stringify(b||{})}
+  const r=await fetch('/api'+p,o);let j={};try{j=await r.json()}catch{}if(!r.ok){const e=new Error(j.error||'Request failed');e.status=r.status;e.data=j;throw e}return j}
+const tag=(t,c='')=>`<span class="tag ${c}">${esc(t)}</span>`;
+const stTag=s=>tag((ST[s]||[s])[0],(ST[s]||[0,''])[1]);
+
+/* ---------------- auth ---------------- */
+function authTab(n){S.mode=n==1?'login':'reg';$('#t1').classList.toggle('on',n==1);$('#t2').classList.toggle('on',n==2);$('#rn').hidden=$('#re').hidden=n==1;
+  $('#at').textContent=n==1?'Welcome back':'Create your account';$('#as').textContent=n==1?'Sign in to check and make payments.':'Takes a minute. No bank details needed.';$('#ab').textContent=n==1?'Sign in':'Create account';$('#aerr').textContent=''}
+async function authGo(){const b=$('#ab');b.disabled=true;$('#aerr').textContent='';
+  try{const d={phone:$('#ap').value,password:$('#aw').value};if(S.mode=='reg'){d.name=$('#an').value;d.email=$('#ae').value}
+    const j=await api(S.mode=='reg'?'/auth/register':'/auth/login','POST',d);start(j.user)}catch(e){$('#aerr').textContent=e.message}b.disabled=false}
+['ap','aw','an','ae'].forEach(i=>$('#'+i).addEventListener('keydown',e=>{if(e.key==='Enter')authGo()}));
+async function logout(){await api('/auth/logout','POST');location.reload()}
+function start(u){S.user=u;$('#auth').hidden=true;$('#app').hidden=false;$('#mn').textContent=u.name;$('#ms').textContent=u.role=='analyst'?'Fraud analyst':'+91 '+u.phone;
+  S.view=u.role=='analyst'?'overview':'pay';nav();show()}
+function nav(){const a=S.user.role=='analyst';const t=a?[['overview','Overview'],['queue','Review queue'],['txns','Payments'],['model','Model'],['patterns','Patterns'],['blocklist','Blocklist'],['users','Users']]:[['pay','Check & pay'],['activity','Activity']];
+  $('#nav').innerHTML=t.map(([k,l])=>`<button class="${S.view==k?'on':''}" onclick="go('${k}')">${l}</button>`).join('')}
+function go(v){S.view=v;S.sel=null;nav();show()}
+function show(){const f={pay:vPay,activity:vActivity,overview:vOverview,queue:()=>vTxns('review'),txns:()=>vTxns('flagged'),model:vModel,patterns:vPatterns,blocklist:vBlock,users:vUsers}[S.view];f()}
+
+/* ---------------- UPI text parsing ---------------- */
+function parseUPI(t){t=(t||'').trim();if(!t)return null;const m=t.match(/^[\w.\-]{2,256}@[A-Za-z][A-Za-z0-9]{1,63}$/);if(m)return{vpa:t.toLowerCase()};
+  const q=t.includes('?')?t.slice(t.indexOf('?')+1):t;const p=new URLSearchParams(q);const pa=p.get('pa');if(!pa)return null;
+  return{vpa:pa.trim().toLowerCase(),name:p.get('pn')||'',amount:p.get('am')||'',kind:/^upi:\/\/collect/i.test(t)?'collect':'link'}}
+
+/* ---------------- Pay view ---------------- */
+function vPay(){const u=S.user,f=S.form;
+  $('#main').innerHTML=`<div class="cols"><div class="panel"><h3>Check a payment</h3><p class="sub">Works for any UPI ID. Nothing is sent until you pass the check.</p>
+    <label>UPI ID, UPI link or QR text</label>
+    <div class="row" style="flex-wrap:nowrap"><input id="fv" placeholder="name@bank  or  upi://pay?pa=..." value="${esc(f.raw||'')}" autocapitalize="off" autocomplete="off" spellcheck="false"><button class="btn gh sm" style="flex:none" onclick="startScan()" title="Scan QR">Scan</button></div>
+    <div id="pinfo" class="info"></div><div id="payees" class="info"></div>
+    <label>Amount (₹)</label><input id="fa" inputmode="decimal" placeholder="0.00" value="${esc(f.amount||'')}">
+    <label>What is this?</label><select id="fm">${Object.entries(MODES).map(([k,v])=>`<option value="${k}" ${f.mode==k?'selected':''}>${v}</option>`).join('')}</select>
+    <label>Why are you paying?</label><select id="fp">${Object.entries(u.purposes).map(([k,v])=>`<option value="${k}" ${(f.purpose||'person')==k?'selected':''}>${esc(v)}</option>`).join('')}</select>
+    <label>Name you were given (optional)</label><input id="fn" placeholder="Shown on the QR or told to you" value="${esc(f.name||'')}">
+    <label>What were you told? (message, chat or call, optional)</label><textarea id="fg" placeholder="Paste the message or describe what the person said. Scam wording is a strong signal.">${esc(f.msg||'')}</textarea>
+    <label class="chk"><input type="checkbox" id="fs" ${f.ss?'checked':''}>Someone is on a call or chat guiding me through this payment</label>
+    <label class="chk"><input type="checkbox" id="fr" ${f.ra?'checked':''}>A screen-sharing or remote app (AnyDesk, TeamViewer, QuickSupport) is open on my phone</label>
+    <div class="err" id="perr"></div><button class="btn pri" id="pb" onclick="doCheck()">Check this payment</button>
+    <p class="hint">Daily limit ${inr(u.daily_limit)} · used ${inr(u.daily_used)}</p></div>
+    <div id="side"></div></div>`;
+  $('#fv').addEventListener('change',onVpa);$('#fv').addEventListener('input',()=>{clearTimeout(S.timer);S.timer=setTimeout(onVpa,700)});
+  paintSide();loadPayees();onVpa(true)}
+async function loadPayees(){try{const r=await api('/payees');const el=$('#payees');if(el&&r.length)el.innerHTML='<span style="color:var(--mut)">Recent:</span> '+r.map(x=>`<button class="tag" style="cursor:pointer" onclick="useVpa('${esc(x.vpa)}')">${esc(x.name||x.vpa)}</button>`).join('')}catch{}}
+function useVpa(v){$('#fv').value=v;onVpa()}
+function paintSide(){const el=$('#side');if(!el)return;
+  if(S.ho)el.innerHTML=handoff(S.ho);else if(S.res)el.innerHTML=verdict(S.res);
+  else el.innerHTML=`<div class="panel"><div class="empty"><b>Your safety check appears here</b>Enter a UPI ID and amount, then press <i>Check this payment</i>.<br><br>We look at the UPI ID itself, the amount, how you were asked, what you were told, and what the Rakshak network already knows about that ID.</div></div>`}
+async function onVpa(quiet){const raw=$('#fv')?.value||'';S.form.raw=raw;const p=parseUPI(raw);const el=$('#pinfo');if(!el)return;
+  if(!raw.trim()){el.innerHTML='';return}
+  if(!p){el.innerHTML=tag('Not a UPI ID yet','w');return}
+  if(p.name&&!$('#fn').value)$('#fn').value=p.name;if(p.amount&&!$('#fa').value)$('#fa').value=p.amount;
+  if(p.kind&&!quiet){$('#fm').value=p.kind}
+  try{const i=await api('/vpa/lookup?vpa='+encodeURIComponent(p.vpa));if(S.form.raw!==raw)return;
+    el.innerHTML=[tag(p.vpa),i.handle_known?tag('@'+i.handle+' recognised','g'):tag('@'+i.handle+' not a common handle','w'),
+      i.exists===false?tag('Not registered','r'):i.verified_name?tag('Account holder: '+i.verified_name,'g'):tag('Name not verified: check it in your UPI app',''),
+      i.blocked?tag('Blocklisted','r'):'',i.complaints?tag(i.complaints+' fraud report'+(i.complaints>1?'s':''),'r'):'',
+      i.paid_before?tag('You paid this ID before','g'):i.seen?tag('Seen on network','') :tag('New to Rakshak','')].join('')}
+  catch(e){el.innerHTML=tag(e.message,'r')}}
+function grab(){return{raw:$('#fv').value,amount:$('#fa').value,mode:$('#fm').value,purpose:$('#fp').value,name:$('#fn').value,msg:$('#fg').value,ss:$('#fs').checked,ra:$('#fr').checked}}
+async function doCheck(){const f=S.form=grab(),b=$('#pb');$('#perr').textContent='';const p=parseUPI(f.raw);
+  if(!p){$('#perr').textContent='Enter a valid UPI ID (like name@bank) or paste a upi:// link.';return}
+  b.disabled=true;b.textContent='Analysing…';S.ho=null;
+  try{S.res=await api('/payments/check','POST',{payee_vpa:p.vpa,amount:f.amount,mode:f.mode,purpose:f.purpose,display_name:f.name,message:f.msg,screenshare:f.ss,remote_app:f.ra});paintSide();$('#side').scrollIntoView({behavior:'smooth',block:'start'})}
+  catch(e){$('#perr').textContent=e.message}b.disabled=false;b.textContent='Check this payment'}
+function verdict(r){const lab={ALLOW:'LOOKS SAFE',WARN:'BE CAREFUL',BLOCK:'HIGH RISK'}[r.decision],pct=Math.round(r.risk*100),id=r.payment_id;
+  const col=r.contributions||[];
+  let act='';
+  if(r.decision==='BLOCK')act=`<div class="acts"><p class="hint" style="margin:0">Rakshak will not hand this payment to your UPI app. Do not pay this ID by any other app either.</p>
+    <button class="btn pri" onclick="act(${id},'review')">Ask an analyst to review it</button><div class="row"><button class="btn gh" onclick="reportPay(${id})">Report this UPI ID</button><button class="btn gh" onclick="act(${id},'cancel')">Cancel payment</button></div></div>`;
+  else act=`<div class="acts">${r.decision==='WARN'?`<label class="chk" style="margin:0"><input type="checkbox" id="ack">I understand the warning and still want to continue.</label>`:''}
+    <button class="btn ${r.decision==='WARN'?'dng':'ok'}" onclick="proceed(${id},${r.decision==='WARN'})">${r.mode==='collect'?'Continue: approve in my UPI app':'Continue: pay '+inr(r.amount)+' in my UPI app'}</button>
+    <button class="btn gh" onclick="act(${id},'cancel')">Cancel</button></div>`;
+  return `<div class="panel"><div class="verdict ${r.decision}"><small>${lab} · RISK ${pct}%</small><h2>${esc(r.headline)}</h2><p>${esc(r.warning)}</p><div class="meter"><i style="width:${Math.max(pct,3)}%"></i></div></div>
+   <div class="facts2">${tag(r.payee_vpa)}${tag(inr(r.amount))}${r.name_verified?tag('Holder: '+r.payee_name,'g'):tag('Holder name unverified')}${r.decision!=='ALLOW'?tag(r.category_label,DC[r.decision]):''}</div>
+   ${r.indicators.length?`<h4>Why</h4>${r.indicators.map(i=>`<div class="ind"><span class="dot ${i.severity}"></span><div>${esc(i.text)}</div></div>`).join('')}`:`<p class="sub">No red flags in the UPI ID, amount, wording or network history.</p>`}
+   ${col.length?`<h4>What drove the score</h4>${col.map(c=>`<div class="bar"><span style="text-align:left;color:var(--ink2)">${esc(c.label)}</span><div><i style="width:${Math.min(100,c.impact*100*2)}%"></i></div><span>+${Math.round(c.impact*100)}%</span></div>`).join('')}`:''}
+   ${r.ai_used?`<div class="ai"><b>Grok:</b> ${esc(r.explanation)}</div>`:`<p class="hint">${esc(r.ai_error||'')}</p>`}
+   ${r.new_pattern?`<p class="hint">New scam pattern "${esc(r.new_pattern)}" sent to analysts for approval.</p>`:''}${act}</div>`}
+async function proceed(id,warn){const body={acknowledge:warn?$('#ack')?.checked:false};if(warn&&!body.acknowledge){toast('Please tick the box to continue.');return}
+  try{S.ho=await api(`/payments/${id}/proceed`,'POST',body);S.ho.id=id;paintSide();if(S.view==='activity')vActivity(id)}catch(e){toast(e.message);if(e.data?.expired){S.res=null;paintSide()}}}
+function handoff(h){const p=h.payment,l=h.links,nm=h.expected_name||p.display_name||'',col=p.mode==='collect';
+  const links=l?`<a class="btn pri" href="${esc(l.generic)}">Open my UPI app</a><div class="row"><a class="btn gh" href="${esc(l.gpay)}">Google Pay</a><a class="btn gh" href="${esc(l.phonepe)}">PhonePe</a><a class="btn gh" href="${esc(l.paytm)}">Paytm</a></div>
+    ${l.qr_svg?`<p class="hint" style="margin-top:12px">On a computer? Scan this with the UPI app on your phone:</p><div class="qr">${l.qr_svg}</div>`:`<p class="hint">On a computer: install <code>qrcode</code> to show a scannable QR here, or open this page on your phone.</p>`}`
+    :`<p>Open your UPI app and go to <b>Pending requests</b>. Approve only the request for <b>${inr(p.amount)}</b> from <b>${esc(p.payee_vpa)}</b>.</p>`;
+  return `<div class="panel ho"><h3>${col?'Finish in your UPI app':'Finish in your UPI app'}</h3><p class="sub">${esc(p.payee_vpa)} · ${inr(p.amount)}</p>${links}
+   <h4>Before you enter your PIN</h4><ol class="steps"><li>The name on your UPI app must read ${nm?'<b>'+esc(nm)+'</b>':'like the person or shop you intend to pay'}.</li><li>The amount must be exactly <b>${inr(p.amount)}</b>.</li><li>${col?'You are being asked to <b>pay</b>. Entering a PIN never receives money.':'Entering a PIN only ever sends money. Cancel if anything looks different.'}</li></ol>
+   <h4>When you are done, tell us what happened</h4><label>UPI reference / UTR (optional, 12 digits)</label><input id="utr" inputmode="numeric" maxlength="12" placeholder="e.g. 412345678901">
+   <div class="row" style="margin-top:12px"><button class="btn ok" onclick="outcome(${p.id},'paid')">${col?'I approved it':'I paid'}</button><button class="btn gh" onclick="outcome(${p.id},'failed')">${col?'I declined it':'It failed / I cancelled'}</button></div>
+   <p class="hint">Status is reported by you: Rakshak never holds money and cannot see your bank. It is saved to your history.</p></div>`}
+async function outcome(id,res){try{await api(`/payments/${id}/outcome`,'POST',{result:res,utr:$('#utr')?.value||''});toast(res==='paid'?'Saved. Stay safe!':'Saved.');S.ho=S.res=null;S.form={};S.user=(await api('/me')).user;S.view==='activity'?vActivity(id):vPay()}catch(e){toast(e.message)}}
+async function act(id,a){try{await api(`/payments/${id}/${a}`,'POST');toast(a==='review'?'Sent to an analyst. Check Activity for the result.':'Cancelled.');S.res=S.ho=null;S.view==='activity'?vActivity():vPay()}catch(e){toast(e.message)}}
+async function reportPay(id){try{await api(`/payments/${id}/report`,'POST',{reason:'scam'});toast('Reported. Thank you: this protects other users.')}catch(e){toast(e.message)}}
+
+/* ---------------- QR scan ---------------- */
+let stream,scanOn=false;
+async function startScan(){if(!('BarcodeDetector' in window)||!navigator.mediaDevices){toast('QR scanning needs Chrome on Android or desktop over HTTPS/localhost. Scan with your phone camera and paste the text instead.');return}
+  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const v=$('#vid');v.srcObject=stream;await v.play();$('#scan').hidden=false;scanOn=true;
+    const det=new BarcodeDetector({formats:['qr_code']});(async function loop(){if(!scanOn)return;try{const c=await det.detect(v);if(c.length){const p=parseUPI(c[0].rawValue);if(p){stopScan();$('#fv').value=c[0].rawValue;$('#fm').value='qr';S.form.raw=c[0].rawValue;if(p.name)$('#fn').value=p.name;if(p.amount)$('#fa').value=p.amount;onVpa(true);return}$('#scanmsg').textContent='That QR is not a UPI QR.'}}catch{}setTimeout(loop,250)})()}
+  catch(e){toast('Camera not available: '+e.message)}}
+function stopScan(){scanOn=false;stream?.getTracks().forEach(t=>t.stop());$('#scan').hidden=true}
+
+/* ---------------- Activity ---------------- */
+async function vActivity(sel){S.sel=sel||S.sel;let list=[];try{list=await api('/payments')}catch(e){toast(e.message)}
+  $('#main').innerHTML=`<div class="cols"><div class="panel"><h3>Your payments</h3><p class="sub">Every check, hand-off and result, stored in your database.</p>${list.length?list.map(p=>`<button class="item ${S.sel==p.id?'on':''}" onclick="vActivity(${p.id})"><div class="m"><b>${esc(p.payee_name||p.display_name||p.payee_vpa)}</b><small>${esc(p.payee_vpa)} · ${when(p.created)}</small></div><div style="text-align:right"><span class="amt">${inr(p.amount)}</span><br>${stTag(p.status)}</div></button>`).join(''):'<div class="empty"><b>No payments yet</b>Run a check from the first tab.</div>'}</div><div id="detail"></div></div>`;
+  if(S.sel)try{detail(await api('/payments/'+S.sel))}catch{}else $('#detail').innerHTML='<div class="panel"><div class="empty"><b>Select a payment</b>See the safety analysis and what you can still do.</div></div>'}
+function detail(p){let a='';
+  if(p.status==='INITIATED')a=`<label>UPI reference / UTR (optional)</label><input id="utr" maxlength="12" inputmode="numeric"><div class="row" style="margin-top:10px"><button class="btn ok" onclick="outcome(${p.id},'paid')">I paid</button><button class="btn gh" onclick="outcome(${p.id},'failed')">Failed / cancelled</button></div>`;
+  if(p.status==='APPROVED')a=`<p>An analyst reviewed and cleared this payment.</p><button class="btn ok" onclick="proceed(${p.id},false)">Continue in my UPI app</button>`;
+  const can=['UNDER_REVIEW','APPROVED','INITIATED'].includes(p.status)?`<button class="btn gh" style="margin-top:10px" onclick="act(${p.id},'cancel')">Cancel payment</button>`:'';
+  $('#detail').innerHTML=S.ho&&S.ho.id==p.id?handoff(S.ho):`<div class="panel"><h3>${esc(p.payee_name||p.display_name||p.payee_vpa)}</h3><p class="sub">${esc(p.payee_vpa)} · ref ${esc(p.ref)}</p>
+   <div class="facts2">${stTag(p.status)}${tag(inr(p.amount))}${tag('Risk '+Math.round((p.risk||0)*100)+'%',DC[p.decision])}${p.decision!=='ALLOW'?tag(p.category_label,DC[p.decision]):''}${p.utr?tag('UTR '+p.utr):''}</div>
+   ${(p.reasons||[]).length?`<h4>Why</h4>${p.reasons.map(i=>`<div class="ind"><span class="dot ${i.severity}"></span><div>${esc(i.text)}</div></div>`).join('')}`:'<p class="sub">No red flags were found.</p>'}
+   ${p.ai?.explanation?`<div class="ai">${esc(p.ai.explanation)}</div>`:''}${a}${can}<button class="btn gh" style="margin-top:10px" onclick="reportPay(${p.id})">Report this UPI ID as a scam</button></div>`}
+
+/* ---------------- Analyst ---------------- */
+async function vOverview(){const s=await api('/admin/stats');const mx=Math.max(1,...s.trend.map(t=>t.total)),cm=Math.max(1,...s.categories.map(c=>c.n));
+  $('#main').innerHTML=`<div class="cards">${[['Payments checked',s.total],['Flagged',s.flagged],['Blocked',s.blocked],['Held back',inr(s.value_held_back)],['Value at risk',inr(s.value_at_risk)],['Reported paid',inr(s.paid)],['Awaiting review',s.under_review],['Users',s.users]].map(([k,v])=>`<div class="stat"><small>${k}</small><b>${v}</b></div>`).join('')}</div>
+  <div class="cols" style="grid-template-columns:1fr 1fr"><div class="panel"><h3>Last 7 days</h3><div class="hb">${s.trend.map(t=>`<div><i style="height:${t.total/mx*100}%" title="${t.flagged} flagged"></i>${t.day.slice(5)}</div>`).join('')||'<p class="sub">No data yet.</p>'}</div></div>
+  <div class="panel"><h3>Flagged by category</h3>${s.categories.map(c=>`<div class="bar" style="grid-template-columns:1fr 100px 30px"><span style="text-align:left;color:var(--ink2)">${esc(c.label)}</span><div><i style="width:${c.n/cm*100}%"></i></div><span>${c.n}</span></div>`).join('')||'<p class="sub">Nothing flagged yet.</p>'}</div></div>
+  <div class="panel" style="margin-top:20px"><h3>System</h3><div class="facts2" style="margin-top:8px">${tag('Grok '+(s.ai_enabled?'ON ('+s.ai_model+')':'off'),s.ai_enabled?'g':'')}${tag('PSP name check '+(s.psp_verify?'ON':'off'),s.psp_verify?'g':'')}${tag(s.blocklisted+' blocklisted IDs')}${tag(s.pending_patterns+' patterns pending')}</div></div>`}
+async function vTxns(view){const rows=await api('/admin/transactions?view='+view);
+  $('#main').innerHTML=`<div class="panel"><div class="row" style="align-items:center"><div><h3>${view==='review'?'Review queue':'Payments'}</h3><p class="sub">${view==='review'?'Blocked payments users sent for human review.':'Flagged payments. Label them to teach the model.'}</p></div>${view==='review'?'':'<div style="flex:none"><button class="btn gh sm" onclick="allTx()">Show all</button></div>'}</div>${txTable(rows,view)}</div>`}
+async function allTx(){const rows=await api('/admin/transactions?view=all');$('#main').innerHTML=`<div class="panel"><h3>All payments</h3><p class="sub">Most recent 150.</p>${txTable(rows,'all')}</div>`}
+function txTable(rows,view){if(!rows.length)return'<div class="empty"><b>Nothing here</b>New activity appears as users check payments.</div>';
+  return `<div style="overflow:auto"><table><tr><th>When</th><th>User</th><th>UPI ID</th><th>Amount</th><th>Verdict</th><th>Why</th><th>Status</th><th></th></tr>${rows.map(r=>`<tr><td>${when(r.created)}</td><td>${esc(r.sender)}<br><small>${esc(r.sender_phone||'')}</small></td><td>${esc(r.payee_vpa)}<br><small>${esc(r.mode)} · ${esc(r.purpose||'')}</small></td><td class="amt">${inr(r.amount)}</td><td>${tag(Math.round(r.risk*100)+'% '+r.decision,DC[r.decision])}<br><small>${esc(r.category_label)}</small></td><td style="max-width:260px">${(r.reasons||[]).slice(0,2).map(i=>esc(i.text)).join('<br>')}</td><td>${stTag(r.status)}${r.analyst_label?'<br>'+tag('Labelled '+r.analyst_label,r.analyst_label==='fraud'?'r':'g'):''}</td>
+   <td style="white-space:nowrap">${r.status==='UNDER_REVIEW'?`<button class="btn ok sm" onclick="resolve(${r.id},'release','${view}')">Release</button> <button class="btn dng sm" onclick="resolve(${r.id},'reject','${view}')">Reject</button><br>`:''}<button class="btn gh sm" onclick="label(${r.id},'fraud','${view}')">Fraud</button> <button class="btn gh sm" onclick="label(${r.id},'legit','${view}')">Legit</button> <button class="btn gh sm" onclick="blockVpa('${esc(r.payee_vpa)}')">Blocklist</button></td></tr>`).join('')}</table></div>`}
+async function resolve(id,a,v){try{await api(`/admin/payments/${id}/resolve`,'POST',{action:a});toast('Done');v==='review'?vTxns('review'):show()}catch(e){toast(e.message)}}
+async function label(id,l,v){try{await api(`/admin/payments/${id}/label`,'POST',{label:l});toast('Labelled '+l+'. Retrain to apply.');v==='all'?allTx():vTxns(v)}catch(e){toast(e.message)}}
+async function blockVpa(v){try{await api('/admin/blocklist','POST',{vpa:v,reason:'Blocked by analyst'});toast(v+' blocklisted')}catch(e){toast(e.message)}}
+async function vModel(){const m=await api('/admin/metrics'),a=m.model,b=m.static_rule_baseline,pc=x=>(x*100).toFixed(1)+'%';
+  $('#main').innerHTML=`<div class="panel"><div class="row" style="align-items:center"><div><h3>Fraud model</h3><p class="sub">Random forest, trained ${when(m.trained_at)} · ${m.feedback_samples} labelled case(s) included</p></div><div style="flex:none"><button class="btn pri sm" id="rt" onclick="retrain()">Retrain now</button></div></div>
+  <table><tr><th></th><th>Rakshak model</th><th>Static rule (amount > ₹10k)</th></tr>${[['Precision','precision'],['Recall (scams caught)','recall'],['False-alarm rate','fpr'],['Accuracy','accuracy']].map(([l,k])=>`<tr><td>${l}</td><td><b>${pc(a[k])}</b></td><td>${pc(b[k])}</td></tr>`).join('')}</table>
+  <h4>Recall by scam type</h4>${Object.entries(m.per_category_recall).map(([k,v])=>`<div class="bar" style="grid-template-columns:1fr 120px 50px"><span style="text-align:left;color:var(--ink2)">${esc(k.replace(/_/g,' '))}</span><div><i style="width:${v*100}%"></i></div><span>${pc(v)}</span></div>`).join('')}
+  <p class="hint" style="margin-top:12px"><b>Read this honestly:</b> ${esc(m.data)}. There is no public labelled UPI-fraud dataset, so these scores describe how well the model learned the typologies it was taught. Real-world accuracy will differ: label real cases (Payments tab) and user scam reports feed back in, weighted ×15, every retrain.</p></div>`}
+async function retrain(){const b=$('#rt');b.disabled=true;b.textContent='Training…';try{await api('/admin/retrain','POST');toast('Model retrained');vModel()}catch(e){toast(e.message);b.disabled=false}}
+async function vPatterns(){const r=await api('/admin/patterns');
+  $('#main').innerHTML=`<div class="panel"><h3>Learned scam patterns</h3><p class="sub">Grok proposes new patterns it sees. Approved ones are matched on every future payment (needs XAI_API_KEY).</p>${r.length?`<table><tr><th>Pattern</th><th>Keywords</th><th>Hits</th><th>Status</th><th></th></tr>${r.map(p=>`<tr><td><b>${esc(p.name)}</b><br><small>${esc(p.description)}</small></td><td>${p.keywords.map(k=>tag(k)).join(' ')}</td><td>${p.hits}</td><td>${tag(p.status,p.status==='approved'?'g':p.status==='rejected'?'r':'w')}</td><td style="white-space:nowrap">${p.status==='pending'?`<button class="btn ok sm" onclick="pat(${p.id},'approved')">Approve</button> <button class="btn gh sm" onclick="pat(${p.id},'rejected')">Reject</button>`:''}</td></tr>`).join('')}</table>`:'<div class="empty"><b>No patterns yet</b></div>'}</div>`}
+async function pat(i,s){await api('/admin/patterns/'+i,'POST',{status:s});vPatterns()}
+async function vBlock(){const r=await api('/admin/blocklist');
+  $('#main').innerHTML=`<div class="panel"><h3>UPI ID blocklist</h3><p class="sub">Any payment to a blocklisted ID is blocked for every user.</p><div class="row"><input id="bv" placeholder="scammer@ybl"><input id="br" placeholder="Reason"><button class="btn pri sm" style="flex:none" onclick="addBl()">Add</button></div>
+  ${r.length?`<table style="margin-top:14px"><tr><th>UPI ID</th><th>Reason</th><th>Added</th><th></th></tr>${r.map(x=>`<tr><td>${esc(x.vpa)}</td><td>${esc(x.reason)}</td><td>${when(x.ts)}</td><td><button class="btn gh sm" onclick="rmBl('${esc(x.vpa)}')">Remove</button></td></tr>`).join('')}</table>`:'<div class="empty"><b>Blocklist is empty</b></div>'}</div>`}
+async function addBl(){try{await api('/admin/blocklist','POST',{vpa:$('#bv').value,reason:$('#br').value});vBlock()}catch(e){toast(e.message)}}
+async function rmBl(v){await api('/admin/blocklist','POST',{vpa:v,action:'remove'});vBlock()}
+async function vUsers(){const r=await api('/admin/users');
+  $('#main').innerHTML=`<div class="panel"><h3>Users</h3><table><tr><th>Name</th><th>Mobile</th><th>Role</th><th>Joined</th><th>Checks</th><th>Flagged</th></tr>${r.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.phone)}</td><td>${esc(u.role)}</td><td>${u.created}</td><td>${u.payments}</td><td>${u.flagged}</td></tr>`).join('')}</table></div>`}
+
+(async()=>{try{const j=await api('/me');start(j.user)}catch{}})();
+</script></body></html>
