@@ -1,0 +1,5 @@
+flask>=3.0
+scikit-learn
+numpy
+qrcode>=7.4
+# optional, for production serving:  gunicorn
